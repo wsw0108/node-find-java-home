@@ -56,12 +56,12 @@ function findJavaHome(options, cb){
     //java_home can be in many places
     //JDK paths
     possibleKeyPaths = [        
-      "SOFTWARE\\JavaSoft\\Java Development Kit"
+      "\\SOFTWARE\\JavaSoft\\Java Development Kit"
     ];
     //JRE paths
     if(options.allowJre){
       possibleKeyPaths = possibleKeyPaths.concat([
-      "SOFTWARE\\JavaSoft\\Java Runtime Environment",
+      "\\SOFTWARE\\JavaSoft\\Java Runtime Environment",
       ]);
     }
 
@@ -101,8 +101,8 @@ function findInRegistry(paths){
   if(!paths.length) return null; 
   
   var keysFound =[];
-  var keyPath = paths.forEach(function(element) {
-    var key = new WinReg({ key: keyPath });
+  paths.forEach(function(element) {
+    var key = new WinReg({ key: element });
     key.keys(function(err, javaKeys){
       keysFound.concat(javaKeys);
     });
@@ -159,24 +159,6 @@ function findJavaHomeSync(options){
   }
 
   if(javaHome)return javaHome;
-
-  //windows
-  if(process.platform.indexOf('win') === 0){
-    //java_home can be in many places
-    //JDK paths
-    possibleKeyPaths = [        
-      "SOFTWARE\\JavaSoft\\Java Development Kit"
-    ];
-    //JRE paths
-    if(options.allowJre){
-      possibleKeyPaths = possibleKeyPaths.concat([
-      "SOFTWARE\\JavaSoft\\Java Runtime Environment",
-      ]);
-    }
-
-    javaHome= findInRegistry(possibleKeyPaths);
-    if(javaHome)return javaHome;
-  }
 
   try {
     var proposed = which.sync(JAVAC_FILENAME);
